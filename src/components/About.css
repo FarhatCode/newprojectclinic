@@ -1,0 +1,94 @@
+.about-container {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+}
+
+.about-image {
+    flex: 1;
+    position: relative;
+}
+
+.about-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.about-badge {
+    position: absolute;
+    bottom: -30px;
+    right: -30px;
+    background-color: var(--surface);
+    padding: 1.5rem 2rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border-left: 5px solid var(--accent);
+}
+
+.badge-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1;
+}
+
+.badge-text {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.about-content {
+    flex: 1;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.about-text {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.about-list {
+    list-style: none;
+    margin-bottom: 2.5rem;
+}
+
+.about-list li {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.check-icon {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    background-color: rgba(59, 130, 246, 0.1);
+    /* Light blue bg */
+    color: var(--secondary);
+    border-radius: 50%;
+    font-weight: 800;
+    font-size: 0.8rem;
+}
+
+@media (max-width: 900px) {
+    .about-container {
+        flex-direction: column;
+        gap: 3rem;
+    }
+
+    .about-badge {
+        right: 1rem;
+        bottom: -20px;
+    }
+}
