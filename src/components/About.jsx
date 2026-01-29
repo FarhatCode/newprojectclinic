@@ -1,14 +1,15 @@
 import React from 'react';
 import './About.css';
+import { Link } from 'react-router-dom';
 
-export default function About() {
+export default function About({ data }) {
     return (
         <section id="about" className="about section">
             <div className="container about-container">
                 <div className="about-image">
                     <img src="/about.png" alt="Our Medical Team" />
                     <div className="about-badge">
-                        <div className="badge-number">10K+</div>
+                        <div className="badge-number">{data?.patients}</div>
                         <div className="badge-text">Здоровых улыбок</div>
                     </div>
                 </div>
@@ -40,7 +41,7 @@ export default function About() {
                         </li>
                     </ul>
 
-                    <button className="btn btn-primary about-btn">Познакомиться с командой</button>
+                    <Link to="/about" className="btn btn-primary about-btn">Познакомиться с командой</Link>
                 </div>
             </div>
         </section>

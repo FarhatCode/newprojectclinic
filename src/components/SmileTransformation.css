@@ -1,0 +1,169 @@
+.transformation-grid {
+    display: flex;
+    gap: 2rem;
+    margin-top: 3rem;
+
+    @media (max-width: 1024px) {
+        flex-wrap: wrap;
+    }
+}
+
+.transform-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.col-1 {
+    width: 36%;
+}
+
+.col-2 {
+    width: 23%;
+}
+
+.col-3 {
+    width: 37%;
+}
+
+/* Adjusted from 44% to fit 100% with gaps */
+
+.transform-card {
+    border-radius: 24px;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.before-after-card {
+    background: #f5f7f5;
+    padding-bottom: 2rem;
+}
+
+.transform-img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 24px 24px 0 0;
+}
+
+.transform-card-title {
+    padding: 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-main);
+    line-height: 1.4;
+}
+
+.info-block {
+    padding: 2rem;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 160px;
+    height: 100%;
+}
+
+.duration-block {
+    background: rgb(39, 74, 115);
+    color: white;
+}
+
+.duration-block .info-label {
+    opacity: 0.8;
+    font-size: 0.9rem;
+}
+
+.duration-block .info-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-top: 1rem;
+    align-self: flex-end;
+}
+
+.price-block {
+    border: 1px solid #e2e8f0;
+    color: var(--text-main);
+}
+
+.price-block .info-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.price-block .info-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #274a72;
+    align-self: flex-end;
+}
+
+.doctor-promo-card {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    height: 100%;
+    background: #f8fafc;
+}
+
+.doctor-image-wrapper {
+    position: relative;
+    height: 400px;
+    overflow: hidden;
+}
+
+.doctor-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.doctor-person {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110%;
+    height: auto;
+    z-index: 2;
+}
+
+.doctor-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    z-index: 3;
+}
+
+.doctor-info {
+    padding: 1.5rem 2rem;
+    background: white;
+    position: relative;
+    z-index: 4;
+    text-align: center;
+}
+
+.doctor-info h3 {
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+.doctor-info p {
+    margin: 0.5rem 0 0;
+    font-size: 0.95rem;
+    color: #64748b;
+}
+
+@media (max-width: 1024px) {
+
+    .col-1,
+    .col-2,
+    .col-3 {
+        width: 100%;
+    }
+}

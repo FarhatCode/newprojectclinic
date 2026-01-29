@@ -1,0 +1,59 @@
+.diagnostics-title {
+    max-width: 700px;
+    margin-bottom: 3rem;
+    line-height: 1.2;
+}
+
+.diagnostics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.diagnostic-card {
+    position: relative;
+    background: #f8fafc;
+    padding: 2rem;
+    border-radius: 16px;
+    min-height: 160px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.diagnostic-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.card-number {
+    position: absolute;
+    right: -10px;
+    bottom: -20px;
+    font-size: 8rem;
+    font-weight: 800;
+    color: #274a72;
+    opacity: 0.2;
+    /* User asked for 0.2 */
+    line-height: 1;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.card-text {
+    position: relative;
+    z-index: 2;
+    font-size: 1.1rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--text-main);
+    max-width: 80%;
+}
+
+@media (max-width: 768px) {
+    .diagnostics-grid {
+        grid-template-columns: 1fr;
+    }
+}

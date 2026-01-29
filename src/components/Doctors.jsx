@@ -1,25 +1,7 @@
 import React from 'react';
 import './Doctors.css';
 
-const doctors = [
-    {
-        name: 'Др. Елена Смирнова',
-        specialty: 'Главный врач, Ортодонт',
-        image: '/doctor.png'
-    },
-    {
-        name: 'Др. Алексей Волков',
-        specialty: 'Хирург-имплантолог',
-        image: '/doctor.png' // Reusing for demo
-    },
-    {
-        name: 'Др. Мария Ковалева',
-        specialty: 'Детский стоматолог',
-        image: '/doctor.png' // Reusing for demo
-    }
-];
-
-export default function Doctors() {
+export default function Doctors({ doctors }) {
     return (
         <section id="doctors" className="doctors section">
             <div className="container">
@@ -29,12 +11,12 @@ export default function Doctors() {
                 </p>
 
                 <div className="doctors-grid">
-                    {doctors.map((doc, index) => (
+                    {doctors && doctors.map((doc, index) => (
                         <div className="doctor-card" key={index}>
                             <div className="doctor-image">
                                 <img src={doc.image} alt={doc.name} />
                                 <div className="doctor-overlay">
-                                    <button className="btn btn-primary btn-sm">Записаться</button>
+                                    <button className="btn btn-primary btn-sm" onClick={() => onOpenModal()}>Записаться</button>
                                 </div>
                             </div>
                             <div className="doctor-info">

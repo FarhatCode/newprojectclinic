@@ -1,40 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './Services.css';
+const API_URL = import.meta.env.VITE_API_URL;
+const VITE_UPLOADS_URL = import.meta.env.VITE_UPLOADS_URL;
 
-const servicesData = [
-    {
-        title: 'Терапия',
-        desc: 'Лечение кариеса, пульпита и эстетическая реставрация зубов.',
-        icon: '🦷' // Placeholder icon
-    },
-    {
-        title: 'Имплантация',
-        desc: 'Восстановление утраченных зубов с пожизненной гарантией.',
-        icon: '🔧'
-    },
-    {
-        title: 'Ортодонтия',
-        desc: 'Исправление прикуса брекетами и элайнерами для детей и взрослых.',
-        icon: '😁'
-    },
-    {
-        title: 'Хирургия',
-        desc: 'Безболезненное удаление зубов, пластика десны и костная пластика.',
-        icon: 'scalpel' // using text/emoji for simplicity or SVG later
-    },
-    {
-        title: 'Отбеливание',
-        desc: 'Профессиональная гигиена и безопасное отбеливание ZOOM 4.',
-        icon: '✨'
-    },
-    {
-        title: 'Детский прием',
-        desc: 'Лечение молочных зубов в игровой форме без слез и боли.',
-        icon: '🧸'
-    }
-];
+export default function Services({ data }) {
+    const [services, setServices] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-export default function Services() {
+    useEffect(() => {
+        fetch(`${API_URL}/services`)
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.length > 0) {
+                    setServices(data);
+                } else {
+                    setServices(defaultServices);
+                }
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error("Failed to fetch services:", err);
+                setServices(defaultServices);
+                setLoading(false);
+            });
+    }, []);
+
     return (
         <section id="services" className="services section">
             <div className="container">
@@ -44,12 +34,11 @@ export default function Services() {
                 </p>
 
                 <div className="services-grid">
-                    {servicesData.map((service, index) => (
+                    {services.map((service, index) => (
                         <div className="service-card" key={index}>
-                            <div className="service-icon">{service.icon === 'scalpel' ? '💉' : service.icon}</div>
+                            <img src={service.icon} alt="Service Icon" className='service-icon' />
                             <h3 className="service-title">{service.title}</h3>
                             <p className="service-desc">{service.desc}</p>
-                            <a href="#appointment" className="service-link">Подробнее &rarr;</a>
                         </div>
                     ))}
                 </div>

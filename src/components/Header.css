@@ -1,11 +1,40 @@
+/* Header.css */
+
+/* Top Bar */
+.top-bar {
+    background-color: var(--primary);
+    color: var(--surface);
+    padding: 0.5rem 0;
+    font-size: 0.875rem;
+}
+
+.top-bar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-bar-left,
+.top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Header */
+/* Header */
 .site-header {
     position: sticky;
     top: 0;
-    background-color: var(--surface);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    background-color: rgba(255, 255, 255, 0.9);
+    /* Translucent */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     z-index: 1000;
-    padding: 1rem 0;
+    padding: 0.8rem 0;
     width: 100%;
+    transition: all 0.3s ease;
 }
 
 .header-container {
@@ -19,6 +48,8 @@
     font-weight: 700;
     color: var(--primary);
     text-decoration: none;
+    display: flex;
+    align-items: center;
 }
 
 .logo-accent {
@@ -28,7 +59,19 @@
 .nav-menu {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 1.5rem;
+}
+
+.nav-menu-right {
+    @media (max-width: 1140px) {
+        display: none;
+    }
+}
+
+.nav-menu-left {
+    background-color: rgba(2, 2, 2, 0.05);
+    gap: 0;
+    border-radius: 30px;
 }
 
 .nav-link {
@@ -36,19 +79,51 @@
     color: var(--text-main);
     transition: color 0.2s;
     text-decoration: none;
+    font-size: 0.95rem;
+    padding: 17px 25px;
+    border-radius: 30px;
+
+    @media (max-width: 900px) {
+        width: 100%;
+    }
 }
 
 .nav-link:hover {
-    color: var(--secondary);
+    background-color: rgba(0, 0, 0, 0.4);
+    color: var(--surface);
+    text-decoration: none;
 }
 
-.nav-phone {
-    background-color: var(--background);
-    color: var(--primary);
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-weight: 600;
-    margin: 0 1rem;
+/* Social Icons */
+.social-icons {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0.5rem;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    transition: all 0.2s;
+    color: var(--surface);
+}
+
+.whatsapp {
+    background-color: #04722c;
+}
+
+.telegram {
+    background-color: #045a85;
+}
+
+.social-link:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
 }
 
 .nav-cta {
@@ -85,8 +160,8 @@
         width: 100%;
         background-color: var(--surface);
         flex-direction: column;
-        padding: 1rem 0;
-        gap: 1rem;
+        padding: 1.5rem 0;
+        gap: 1.5rem;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         transform: translateY(-100%);
         opacity: 0;
@@ -99,9 +174,5 @@
         transform: translateY(0);
         opacity: 1;
         pointer-events: auto;
-    }
-
-    .nav-phone {
-        margin: 0;
     }
 }

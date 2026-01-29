@@ -1,7 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Footer.css';
 
-export default function Footer() {
+export default function Footer({ content }) {
+    const [formData, setFormData] = useState({ name: '', phone: '', comment: '' });
+
+    console.log(content);
+
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        fetch(`${import.meta.env.VITE_API_URL}/appointments`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        })
+            .then(res => {
+                if (res.ok) {
+                    alert('Спасибо за заявку! Мы свяжемся с вами в ближайшее время.');
+                    setFormData({ name: '', phone: '', comment: '' });
+                } else {
+                    alert('Ошибка при отправке заявки.');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Ошибка сети.');
+            });
+    };
+
     return (
         <footer id="contact" className="site-footer">
             <div className="container">
@@ -15,34 +41,58 @@ export default function Footer() {
                         <div className="contact-details">
                             <div className="contact-item">
                                 <span className="icon">📍</span>
-                                <span>г. Тюмень, ул. Ленина, 50</span>
+                                <span>{content?.address}</span>
                             </div>
                             <div className="contact-item">
                                 <span className="icon">📞</span>
-                                <a href="tel:+79991234567">+7 (999) 123-45-67</a>
+                                <a href={`tel:${content?.phone.replace(/\D/g, '')}`}>{content?.phone}</a>
                             </div>
                             <div className="contact-item">
                                 <span className="icon">✉️</span>
-                                <a href="mailto:info@clinic.ru">info@clinicpremier.ru</a>
+                                <a href={`mailto:${content?.email}`}>{content?.email}</a>
+                            </div>
+                            <div className="contact-item">
+                                <span className="icon">🕒</span>
+                                <span>{content?.hours}</span>
                             </div>
                         </div>
 
                         <div className="social-links">
-                            <a href="#" className="social-icon">VK</a>
-                            <a href="#" className="social-icon">TG</a>
-                            <a href="#" className="social-icon">WA</a>
+                            <a href={content?.vk} className="social-icon">VK</a>
+                            <a href={content?.tg} className="social-icon">TG</a>
+                            <a href={content?.wa} className="social-icon">WA</a>
                         </div>
                     </div>
 
-                    <form className="footer-form">
+                    <form className="footer-form" onSubmit={handleSubmit}>
                         <h3 className="form-title">Записаться на прием</h3>
                         <div className="form-group">
-                            <input type="text" placeholder="Ваше имя" required />
+                            <input
+                                type="text"
+                                placeholder="Ваше имя"
+                                required
+                                value={formData.name}
+                                onChange={e => setFormData({ ...formData, name: e.target.value })}
+                            />
                         </div>
                         <div className="form-group">
-                            <input type="tel" placeholder="Ваш телефон" required />
+                            <input
+                                type="tel"
+                                placeholder="Ваш телефон"
+                                required
+                                value={formData.phone}
+                                onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                            />
                         </div>
-                        <button type="submit" className="btn btn-primary form-btn">Отправить заявку</button>
+                        <div className="form-group">
+                            <label>Комментарий</label>
+                            <textarea
+                                placeholder="Желаемая процедура или время"
+                                value={formData.comment}
+                                onChange={e => setFormData({ ...formData, comment: e.target.value })}
+                            ></textarea>
+                        </div>
+                        <button type="submit" className="btn btn-primary form-btn" >Отправить заявку</button>
                         <p className="form-note">Нажимая кнопку, вы соглашаетесь с обработкой персональных данных</p>
                     </form>
                 </div>
