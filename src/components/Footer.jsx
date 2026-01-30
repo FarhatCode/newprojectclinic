@@ -4,9 +4,6 @@ import './Footer.css';
 export default function Footer({ content }) {
     const [formData, setFormData] = useState({ name: '', phone: '', comment: '' });
 
-    console.log(content);
-
-
     const handleSubmit = (e) => {
         e.preventDefault();
         fetch(`${import.meta.env.VITE_API_URL}/appointments`, {

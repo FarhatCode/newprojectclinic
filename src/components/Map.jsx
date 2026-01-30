@@ -1,3 +1,5 @@
+const VITE_UPLOADS_URL = import.meta.env.VITE_UPLOADS_URL;
+
 export default function Map({ data }) {
 
     return (
@@ -9,7 +11,7 @@ export default function Map({ data }) {
                 </a>
             </div>
             <iframe
-                src={data?.iframe}
+                src={data?.iframe?.includes("http") ? VITE_UPLOADS_URL + data?.iframe : data?.iframe}
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}

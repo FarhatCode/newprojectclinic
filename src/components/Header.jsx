@@ -6,7 +6,6 @@ import './Header.css';
 export default function Header({ onOpenModal, content }) {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  console.log(content);
 
   const closeMenu = () => setIsOpen(false);
 

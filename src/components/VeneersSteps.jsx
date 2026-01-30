@@ -16,8 +16,6 @@ export default function VeneersSteps({ data }) {
 
     const activeStepData = steps[currentStep] || {};
 
-    console.log(data);
-
     return (
         <section className="veneers-steps">
             <div className="section-background">
@@ -43,7 +41,7 @@ export default function VeneersSteps({ data }) {
                         </div>
                         <div className="step-image-wrapper">
                             {activeStepData.image && (
-                                <img src={`${VITE_UPLOADS_URL}${activeStepData.image.preview}`} alt={`Step ${currentStep + 1}`} className="step-image" />
+                                <img src={activeStepData?.image?.preview?.includes("http") ? VITE_UPLOADS_URL + activeStepData?.image?.preview : activeStepData?.image?.preview} alt={`Step ${currentStep + 1}`} className="step-image" />
                             )}
                         </div>
                         <div className="step-navigation">
@@ -75,7 +73,7 @@ export default function VeneersSteps({ data }) {
                         <div className="avatars-group">
                             {data.promo?.avatars?.map((avatar, idx) => (
                                 <div key={idx} className="avatar-frame">
-                                    <img src={avatar} alt="Avatar" />
+                                    <img src={avatar?.includes("http") ? VITE_UPLOADS_URL + avatar : avatar} alt="Avatar" />
                                 </div>
                             ))}
                         </div>

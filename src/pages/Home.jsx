@@ -10,7 +10,6 @@ import VeneersSteps from '../components/VeneersSteps';
 import InstagramSection from '../components/InstagramSection';
 import Map from '../components/Map';
 export default function Home({ onOpenModal, content }) {
-    console.log(content);
 
     return (
         <>
