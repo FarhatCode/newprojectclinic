@@ -12,7 +12,7 @@ export default function VisualDiagnostics({ data }) {
         const handleScroll = () => {
             const scrollY = window.scrollY;
             if (gallery1Ref.current) {
-                gallery1Ref.current.style.transform = `translateX(${(scrollY * 0.2) - 800}px)`;
+                gallery1Ref.current.style.transform = `translateX(${(scrollY * 0.2) - 1600}px)`;
             }
             if (gallery2Ref.current) {
                 gallery2Ref.current.style.transform = `translateX(-${(scrollY * 0.2)}px)`;
@@ -41,14 +41,14 @@ export default function VisualDiagnostics({ data }) {
                 <div className="gallery-track track-right" ref={gallery1Ref}>
                     {(data.gallery1 || []).concat(data.gallery1 || []).map((img, i) => (
                         <div key={`g1-${i}`} className="gallery-item">
-                            <img src={img?.includes("http") ? VITE_UPLOADS_URL + img : img} alt="Clinic interior" />
+                            <img src={img} alt="Clinic interior" />
                         </div>
                     ))}
                 </div>
                 <div className="gallery-track track-left" ref={gallery2Ref}>
                     {(data.gallery2 || []).concat(data.gallery2 || []).map((img, i) => (
                         <div key={`g2-${i}`} className="gallery-item">
-                            <img src={img?.includes("http") ? VITE_UPLOADS_URL + img : img} alt="Clinic equipment" />
+                            <img src={img} alt="Clinic equipment" />
                         </div>
                     ))}
                 </div>

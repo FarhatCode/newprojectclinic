@@ -103,12 +103,11 @@
       "title": "Визуальная диагностика",
       "text": "В нашей клинике пациенты в обязательном порядке проходят фотопротокол, где изображение выводится на большие телевизионные мониторы, что позволяет пациентам видеть все проблемы в своей полости рта.",
       "gallery1": [
-        "/gallery1-1.png",
-        "/gallery1-2.png",
-        "/gallery1-3.png",
-        "/gallery1-4.png",
-        "/gallery1-5.png",
-        "/gallery1-6.png"
+        "http://localhost:3001/uploads/5d98acba4b12df35598fc4075c8c46b0",
+        "http://localhost:3001/uploads/48c1f23e77648816a5c737b2516d07e7",
+        "http://localhost:3001/uploads/32b4097353464228a162e6be29d952d2",
+        "http://localhost:3001/uploads/7bc9dbac76f96741b00cb949788df292",
+        "http://localhost:3001/uploads/14b295351e44627b69a6887a2511d6ea"
       ],
       "gallery2": [
         "/gallery2-1.png",
@@ -254,5 +253,8 @@
         "date": "2026-01-29T18:11:37.637Z"
       }
     ]
+  },
+  "settings": {
+    "password": "96b464e7718855ee370095c8013b8335:23d35eeac43bcc997df73e14f22c6ce539da79c4c4020c8c27583557e9c21c3e1a601bd2974cc1c3357c5088fbbb1423d2d0506b0308391f8dac55c9cd1704f7"
   }
 }

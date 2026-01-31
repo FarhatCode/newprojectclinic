@@ -6,7 +6,9 @@ const VITE_UPLOADS_URL = import.meta.env.VITE_UPLOADS_URL;
 
 export default function AdminPanel() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [password, setPassword] = useState('admin123');
+    const [password, setPassword] = useState('');
+    const [token, setToken] = useState('');
+    const [newPassword, setNewPassword] = useState('');
     const [services, setServices] = useState([]);
     const [newService, setNewService] = useState({ title: '', desc: '', icon: './tooth.png' });
     const [content, setContent] = useState(null);
@@ -67,7 +69,9 @@ export default function AdminPanel() {
 
     const [appointments, setAppointments] = useState([]);
     const fetchAppointments = () => {
-        fetch(`${API_URL}/appointments`)
+        fetch(`${API_URL}/appointments`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
             .then(res => res.json())
             .then(data => setAppointments(data))
             .catch(console.error);
@@ -75,7 +79,10 @@ export default function AdminPanel() {
 
     const handleDeleteReview = (id) => {
         if (!confirm('Удалить отзыв?')) return;
-        fetch(`${API_URL}/reviews/${id}`, { method: 'DELETE' })
+        fetch(`${API_URL}/reviews/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
             .then(() => {
                 setReviews(reviews.filter(r => r.id !== id));
             })
@@ -132,6 +139,7 @@ export default function AdminPanel() {
         try {
             const res = await fetch(`${VITE_UPLOADS_URL}/upload`, {
                 method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
                 body: formData
             });
             const data = await res.json();
@@ -172,13 +180,22 @@ export default function AdminPanel() {
 
                 response = await fetch(`${API_URL}/content`, {
                     method: "POST",
+                    headers: { 'Authorization': `Bearer ${token}` },
                     body: formData
                 });
             } else {
+                const preparedData = {
+                    ...data,
+                    gallery1: data.gallery1,
+                    gallery2: data.gallery2
+                };
                 response = await fetch(`${API_URL}/content`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ section, data })
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ section, data: preparedData })
                 });
             }
 
@@ -195,15 +212,35 @@ export default function AdminPanel() {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        if (password === 'admin123') setIsAuthenticated(true);
-        else alert('Неверный пароль!');
+        fetch(`${API_URL}/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    setToken(data.token);
+                    setIsAuthenticated(true);
+                    setPassword('');
+                } else {
+                    alert('Неверный пароль!');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Ошибка при входе');
+            });
     };
 
     const handleAddService = (e) => {
         e.preventDefault();
         fetch(`${API_URL}/services`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify(newService)
         })
             .then(res => res.json())
@@ -215,12 +252,46 @@ export default function AdminPanel() {
     };
 
     const handleDeleteService = (id) => {
-        fetch(`${API_URL}/services/${id}`, { method: 'DELETE' })
+        fetch(`${API_URL}/services/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
             .then(() => {
                 setServices(services.filter(s => s.id !== id));
                 alert('Услуга удалена!');
             })
             .catch(console.error);
+    };
+
+    const handleChangePassword = (e) => {
+        e.preventDefault();
+        if (newPassword.length < 6) {
+            alert('Пароль слишком короткий (минимум 6 символов)');
+            return;
+        }
+
+        fetch(`${API_URL}/change-password`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ newPassword })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Пароль успешно изменен!');
+                    setToken(newPassword); // Update token to stay logged in
+                    setNewPassword('');
+                } else {
+                    alert('Ошибка при смене пароля: ' + data.error);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Ошибка при смене пароля');
+            });
     };
 
     if (!isAuthenticated) {
@@ -252,6 +323,7 @@ export default function AdminPanel() {
                 <button className={`btn ${activeTab === 'reviews' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setActiveTab('reviews')}>Отзывы</button>
                 <button className={`btn ${activeTab === 'appointments' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setActiveTab('appointments')}>Заявки</button>
                 <button className={`btn ${activeTab === 'content' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setActiveTab('content')}>Контент</button>
+                <button className={`btn ${activeTab === 'settings' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setActiveTab('settings')}>Настройки</button>
             </div>
 
             {activeTab === 'services' && (
@@ -711,6 +783,28 @@ export default function AdminPanel() {
                                 <label>WA URL: <input type="text" value={content.contact?.wa} onChange={e => updateNestedContent('contact', ['wa'], e.target.value)} style={{ width: '100%', padding: '0.5rem' }} /></label>
                             </div>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {activeTab === 'settings' && (
+                <div className="admin-section">
+                    <h2>Настройки</h2>
+                    <div style={{ maxWidth: '400px', marginTop: '1.5rem', padding: '1.5rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #eee' }}>
+                        <h3>Смена пароля</h3>
+                        <form onSubmit={handleChangePassword} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                                <label>Новый пароль:</label>
+                                <input
+                                    type="password"
+                                    value={newPassword}
+                                    onChange={e => setNewPassword(e.target.value)}
+                                    placeholder="Минимум 6 символов"
+                                    style={{ padding: '0.8rem', borderRadius: '8px', border: '1px solid #ccc' }}
+                                />
+                            </div>
+                            <button type="submit" className="btn btn-primary">Обновить пароль</button>
+                        </form>
                     </div>
                 </div>
             )}

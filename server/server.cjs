@@ -1,6 +1,7 @@
 const dotenv = require("dotenv");
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 if (fs.existsSync(path.join(__dirname, '../.env.development'))) {
     dotenv.config({ path: path.join(__dirname, '../.env.development') });
@@ -20,6 +21,74 @@ const VITE_UPLOADS_URL = process.env.VITE_UPLOADS_URL;
 app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+
+const DEFAULT_PASSWORD = process.env.ADMIN_PASSWORD;
+if (!DEFAULT_PASSWORD) {
+    console.error("CRITICAL ERROR: ADMIN_PASSWORD is not defined in .env! Server will not allow login.");
+}
+
+// Native Node.js Password Hashing (compatible with web and local)
+const hashPassword = (password) => {
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = crypto.scryptSync(password, salt, 64).toString('hex');
+    return `${salt}:${hash}`;
+};
+
+const verifyPassword = (password, storedHash) => {
+    if (!storedHash.includes(':')) {
+        // Migration: If plain text, check and then hash
+        return password === storedHash;
+    }
+    const [salt, hash] = storedHash.split(':');
+    const checkHash = crypto.scryptSync(password, salt, 64).toString('hex');
+    return hash === checkHash;
+};
+
+const getAdminPasswordHash = () => {
+    const db = readDb();
+    let stored = db.settings?.password;
+    if (!stored) {
+        // Store default hashed if nothing exists
+        stored = hashPassword(DEFAULT_PASSWORD);
+        if (!db.settings) db.settings = {};
+        db.settings.password = stored;
+        writeDb(db);
+    }
+    return stored;
+};
+
+const authMiddleware = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    // For simplicity with the existing Bearer token logic, we still use the plain password
+    // In a real app we'd use JWT, but here we'll re-verify the "token" which is the plain pass
+    const providedPassword = (authHeader || '').replace('Bearer ', '');
+    if (providedPassword && verifyPassword(providedPassword, getAdminPasswordHash())) {
+        next();
+    } else {
+        res.status(401).json({ error: 'Unauthorized' });
+    }
+};
+
+app.post('/api/login', (req, res) => {
+    const { password } = req.body;
+    if (password && verifyPassword(password, getAdminPasswordHash())) {
+        res.json({ success: true, token: password });
+    } else {
+        res.status(401).json({ success: false, error: 'Invalid password' });
+    }
+});
+
+app.post('/api/change-password', authMiddleware, (req, res) => {
+    const { newPassword } = req.body;
+    if (!newPassword || newPassword.length < 6) {
+        return res.status(400).json({ error: 'Password too short' });
+    }
+    const db = readDb();
+    if (!db.settings) db.settings = {};
+    db.settings.password = hashPassword(newPassword);
+    writeDb(db);
+    res.json({ success: true });
+});
 
 // Helper to read DB
 const readDb = () => {
@@ -72,8 +141,8 @@ app.get('/api/services', (req, res) => {
     res.json(db.services);
 });
 
-// POST Service
-app.post('/api/services', (req, res) => {
+// POST Service (Protected)
+app.post('/api/services', authMiddleware, (req, res) => {
     const db = readDb();
     const newService = { id: Date.now(), ...req.body };
     db.services.push(newService);
@@ -81,8 +150,8 @@ app.post('/api/services', (req, res) => {
     res.status(201).json(newService);
 });
 
-// PUT Service
-app.put('/api/services/:id', (req, res) => {
+// PUT Service (Protected)
+app.put('/api/services/:id', authMiddleware, (req, res) => {
     const db = readDb();
     const { id } = req.params;
     const index = db.services.findIndex(s => s.id == id);
@@ -95,8 +164,8 @@ app.put('/api/services/:id', (req, res) => {
     }
 });
 
-// DELETE Service
-app.delete('/api/services/:id', (req, res) => {
+// DELETE Service (Protected)
+app.delete('/api/services/:id', authMiddleware, (req, res) => {
     const db = readDb();
     const { id } = req.params;
     db.services = db.services.filter(s => s.id != id);
@@ -104,8 +173,8 @@ app.delete('/api/services/:id', (req, res) => {
     res.status(204).send();
 });
 
-// GET Appointments
-app.get('/api/appointments', (req, res) => {
+// GET Appointments (Protected)
+app.get('/api/appointments', authMiddleware, (req, res) => {
     const db = readDb();
     res.json(db.appointments || []);
 });
@@ -126,8 +195,8 @@ app.get('/api/content', (req, res) => {
     res.json(db.content || {});
 });
 
-// DELETE Review
-app.delete('/api/reviews/:id', (req, res) => {
+// DELETE Review (Protected)
+app.delete('/api/reviews/:id', authMiddleware, (req, res) => {
     const db = readDb();
     const { id } = req.params;
     db.reviews = db.reviews.filter(r => r.id != id);
@@ -135,8 +204,8 @@ app.delete('/api/reviews/:id', (req, res) => {
     res.status(204).send();
 });
 
-// PUT Review
-app.put('/api/reviews/:id', (req, res) => {
+// PUT Review (Protected)
+app.put('/api/reviews/:id', authMiddleware, (req, res) => {
     const db = readDb();
     const { id } = req.params;
     const index = db.reviews.findIndex(r => r.id == id);
@@ -149,8 +218,8 @@ app.put('/api/reviews/:id', (req, res) => {
     }
 });
 
-// POST Content (update whole content or specific section)
-app.post('/api/content', upload.any(), (req, res) => {
+// POST Content (Protected)
+app.post('/api/content', authMiddleware, upload.any(), (req, res) => {
     const db = readDb();
     const { section, data } = req.body;
 
@@ -193,8 +262,8 @@ app.post('/api/content', upload.any(), (req, res) => {
 });
 
 
-// File Upload
-app.post('/upload', upload.single('file'), (req, res) => {
+// File Upload (Protected)
+app.post('/upload', authMiddleware, upload.single('file'), (req, res) => {
     if (!req.file) return res.status(400).send('No file uploaded');
     res.json({ url: `${VITE_UPLOADS_URL}/uploads/${req.file.filename}` });
 });

@@ -33,6 +33,8 @@ function App() {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
+  console.log(content);
+
   return (
     <Router>
       <div className="App">
