@@ -39,7 +39,7 @@ export default function Services({ data }) {
                 <div className="services-grid">
                     {services.map((service, index) => (
                         <div className="service-card" key={index}>
-                            <img src={service?.icon?.includes("http") ? service?.icon : VITE_UPLOADS_URL + service?.icon} alt="Service Icon" className='service-icon' />
+                            <img src={service?.icon} alt="Service Icon" className='service-icon' />
                             <h3 className="service-title">{service.title}</h3>
                             <p className="service-desc">{service.desc}</p>
                         </div>

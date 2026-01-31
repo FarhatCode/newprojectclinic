@@ -263,6 +263,34 @@ export default function AdminPanel() {
             .catch(console.error);
     };
 
+    const handleUpdateAppointmentStatus = (id, newStatus) => {
+        fetch(`${API_URL}/appointments/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ status: newStatus })
+        })
+            .then(res => res.json())
+            .then(updated => {
+                setAppointments(appointments.map(a => a.id === id ? updated : a));
+            })
+            .catch(console.error);
+    };
+
+    const handleDeleteAppointment = (id) => {
+        if (!confirm('Вы уверены, что хотите удалить эту заявку?')) return;
+        fetch(`${API_URL}/appointments/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+            .then(() => {
+                setAppointments(appointments.filter(a => a.id !== id));
+            })
+            .catch(console.error);
+    };
+
     const handleChangePassword = (e) => {
         e.preventDefault();
         if (newPassword.length < 6) {
@@ -397,26 +425,88 @@ export default function AdminPanel() {
             {activeTab === 'appointments' && (
                 <div className="admin-section">
                     <h2>Заявки с сайта</h2>
-                    <div style={{ marginTop: '1rem' }}>
+                    <div style={{ marginTop: '1rem', overflowX: 'auto' }}>
                         {appointments.length === 0 ? <p>Заявок пока нет</p> : (
-                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '800px' }}>
                                 <thead>
                                     <tr style={{ textAlign: 'left', borderBottom: '2px solid #eee' }}>
                                         <th style={{ padding: '1rem' }}>Дата</th>
                                         <th style={{ padding: '1rem' }}>Имя</th>
                                         <th style={{ padding: '1rem' }}>Телефон</th>
                                         <th style={{ padding: '1rem' }}>Комментарий</th>
+                                        <th style={{ padding: '1rem' }}>Статус</th>
+                                        <th style={{ padding: '1rem' }}>Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {appointments.map(app => (
-                                        <tr key={app.id} style={{ borderBottom: '1px solid #eee' }}>
-                                            <td style={{ padding: '1rem' }}>{new Date(app.date).toLocaleString()}</td>
-                                            <td style={{ padding: '1rem' }}>{app.name}</td>
-                                            <td style={{ padding: '1rem' }}>{app.phone}</td>
-                                            <td style={{ padding: '1rem' }}>{app.comment}</td>
-                                        </tr>
-                                    ))}
+                                    {appointments.map(app => {
+                                        let rowStyle = { borderBottom: '1px solid #eee' };
+                                        let badgeStyle = {
+                                            padding: '4px 8px',
+                                            borderRadius: '4px',
+                                            fontSize: '0.85rem',
+                                            fontWeight: '600',
+                                            textTransform: 'uppercase'
+                                        };
+
+                                        if (app.status === 'processed') {
+                                            rowStyle.background = '#f0fdf4';
+                                            rowStyle.color = '#166534';
+                                            badgeStyle.background = '#dcfce7';
+                                            badgeStyle.color = '#166534';
+                                        } else if (app.status === 'spam') {
+                                            rowStyle.background = '#fef2f2';
+                                            rowStyle.color = '#991b1b';
+                                            rowStyle.textDecoration = 'line-through opacity(0.5)';
+                                            badgeStyle.background = '#fee2e2';
+                                            badgeStyle.color = '#991b1b';
+                                        } else if (app.status === 'expired') {
+                                            rowStyle.background = '#f8fafc';
+                                            rowStyle.color = '#64748b';
+                                            badgeStyle.background = '#f1f5f9';
+                                            badgeStyle.color = '#64748b';
+                                        } else {
+                                            // 'new'
+                                            rowStyle.background = '#eff6ff';
+                                            badgeStyle.background = '#dbeafe';
+                                            badgeStyle.color = '#1e40af';
+                                        }
+
+                                        return (
+                                            <tr key={app.id} style={rowStyle}>
+                                                <td style={{ padding: '1rem' }}>{new Date(app.date).toLocaleString()}</td>
+                                                <td style={{ padding: '1rem' }}>{app.name}</td>
+                                                <td style={{ padding: '1rem' }}>{app.phone}</td>
+                                                <td style={{ padding: '1rem' }}>{app.comment}</td>
+                                                <td style={{ padding: '1rem' }}>
+                                                    <select
+                                                        value={app.status || 'new'}
+                                                        onChange={(e) => handleUpdateAppointmentStatus(app.id, e.target.value)}
+                                                        style={{
+                                                            padding: '0.4rem',
+                                                            borderRadius: '6px',
+                                                            border: '1px solid #ddd',
+                                                            ...badgeStyle
+                                                        }}
+                                                    >
+                                                        <option value="new">Новая</option>
+                                                        <option value="processed">Обработана</option>
+                                                        <option value="spam">Спам</option>
+                                                        <option value="expired">Просрочена</option>
+                                                    </select>
+                                                </td>
+                                                <td style={{ padding: '1rem' }}>
+                                                    <button
+                                                        onClick={() => handleDeleteAppointment(app.id)}
+                                                        className="btn btn-danger btn-sm"
+                                                        style={{ padding: '0.4rem 0.8rem' }}
+                                                    >
+                                                        Удалить
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         )}
@@ -636,7 +726,7 @@ export default function AdminPanel() {
                                                 </label>
                                             </div>
                                         </div>
-                                        {step.image?.preview && <img src={step?.image?.preview?.includes("http") ? step?.image?.preview : VITE_UPLOADS_URL + step?.image?.preview} alt="preview" style={{ height: '100px', objectFit: 'contain', marginTop: '0.5rem' }} />}
+                                        {step.image?.preview && <img src={step?.image?.preview} alt="preview" style={{ height: '100px', objectFit: 'contain', marginTop: '0.5rem' }} />}
                                         <button className="btn btn-danger btn-sm" style={{ marginTop: '0.5rem', width: 'fit-content' }} onClick={() => removeItemFromArray('veneersSteps', ['steps'], idx)}>Удалить Этап</button>
                                     </div>
                                 </div>

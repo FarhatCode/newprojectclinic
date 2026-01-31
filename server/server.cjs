@@ -184,10 +184,39 @@ app.get('/api/appointments', authMiddleware, (req, res) => {
 app.post('/api/appointments', (req, res) => {
     const db = readDb();
     if (!db.appointments) db.appointments = [];
-    const newAppointment = { id: Date.now(), ...req.body, date: new Date().toISOString() };
+    const newAppointment = {
+        id: Date.now(),
+        ...req.body,
+        status: 'new', // Default status
+        date: new Date().toISOString()
+    };
     db.appointments.push(newAppointment);
     writeDb(db);
     res.status(201).json(newAppointment);
+});
+
+// Update Appointment Status (Protected)
+app.put('/api/appointments/:id', authMiddleware, (req, res) => {
+    const db = readDb();
+    const { id } = req.params;
+    const { status } = req.body;
+    const index = db.appointments.findIndex(a => a.id == id);
+    if (index !== -1) {
+        db.appointments[index].status = status;
+        writeDb(db);
+        res.json(db.appointments[index]);
+    } else {
+        res.status(404).json({ error: 'Appointment not found' });
+    }
+});
+
+// DELETE Appointment (Protected)
+app.delete('/api/appointments/:id', authMiddleware, (req, res) => {
+    const db = readDb();
+    const { id } = req.params;
+    db.appointments = db.appointments.filter(a => a.id != id);
+    writeDb(db);
+    res.status(204).send();
 });
 
 // GET Content

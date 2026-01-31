@@ -41,7 +41,7 @@ export default function VeneersSteps({ data }) {
                         </div>
                         <div className="step-image-wrapper">
                             {activeStepData.image && (
-                                <img src={activeStepData?.image?.preview?.includes("http") ? activeStepData?.image?.preview : VITE_UPLOADS_URL + activeStepData?.image?.preview} alt={`Step ${currentStep + 1}`} className="step-image" />
+                                <img src={activeStepData?.image?.preview} alt={`Step ${currentStep + 1}`} className="step-image" />
                             )}
                         </div>
                         <div className="step-navigation">
@@ -73,7 +73,7 @@ export default function VeneersSteps({ data }) {
                         <div className="avatars-group">
                             {data.promo?.avatars?.map((avatar, idx) => (
                                 <div key={idx} className="avatar-frame">
-                                    <img src={avatar?.includes("http") ? avatar : VITE_UPLOADS_URL + avatar} alt="Avatar" />
+                                    <img src={avatar} alt="Avatar" />
                                 </div>
                             ))}
                         </div>

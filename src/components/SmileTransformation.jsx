@@ -15,7 +15,7 @@ export default function SmileTransformation({ data }) {
                     {/* Column 1: Before/After */}
                     <div className="transform-col col-1">
                         <div className="transform-card before-after-card">
-                            <img src={data?.column1?.image?.includes("http") ? data?.column1?.image : VITE_UPLOADS_URL + data?.column1?.image} alt="Result" className="transform-img" />
+                            <img src={data?.column1?.image} alt="Result" className="transform-img" />
                             <h3 className="transform-card-title">{data?.column1?.title}</h3>
                         </div>
                     </div>
@@ -36,7 +36,7 @@ export default function SmileTransformation({ data }) {
                     <div className="transform-col col-3">
                         <div className="doctor-promo-card">
                             <div className="doctor-image-wrapper">
-                                <img src={data?.column3?.image?.includes("http") ? data?.column3?.image : VITE_UPLOADS_URL + data?.column3?.image} alt="Doctor" className="doctor-person" />
+                                <img src={data?.column3?.image} alt="Doctor" className="doctor-person" />
                                 <div className="doctor-mask"></div>
                             </div>
                             <div className="doctor-info">
