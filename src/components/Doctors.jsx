@@ -16,7 +16,7 @@ export default function Doctors({ doctors }) {
                     {doctors && doctors.map((doc, index) => (
                         <div className="doctor-card" key={index}>
                             <div className="doctor-image">
-                                <img src={doc?.image?.includes("http") ? VITE_UPLOADS_URL + doc?.image : doc?.image} alt={doc?.name} />
+                                <img src={doc?.image?.includes("http") ? doc?.image : VITE_UPLOADS_URL + doc?.image} alt={doc?.name} />
                                 <div className="doctor-overlay">
                                     <button className="btn btn-primary btn-sm" onClick={() => onOpenModal()}>Записаться</button>
                                 </div>

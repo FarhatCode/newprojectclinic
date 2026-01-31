@@ -9,7 +9,7 @@ export default function Portfolio({ portfolio }) {
                 {portfolio && portfolio.length > 0 ? (
                     portfolio.map((item, index) => (
                         <div key={index} className="portfolio-item">
-                            <img src={item?.image?.includes("http") ? VITE_UPLOADS_URL + item?.image : item?.image} alt={`Работа ${index + 1}`} style={{ width: '100%', borderRadius: '12px', objectFit: 'cover', height: '300px' }} />
+                            <img src={item?.image?.includes("http") ? item?.image : VITE_UPLOADS_URL + item?.image} alt={`Работа ${index + 1}`} style={{ width: '100%', borderRadius: '12px', objectFit: 'cover', height: '300px' }} />
                         </div>
                     ))
                 ) : (

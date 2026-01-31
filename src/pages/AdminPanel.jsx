@@ -636,7 +636,7 @@ export default function AdminPanel() {
                                                 </label>
                                             </div>
                                         </div>
-                                        {step.image?.preview && <img src={step?.image?.preview?.includes("http") ? VITE_UPLOADS_URL + step?.image?.preview : step?.image?.preview} alt="preview" style={{ height: '100px', objectFit: 'contain', marginTop: '0.5rem' }} />}
+                                        {step.image?.preview && <img src={step?.image?.preview?.includes("http") ? step?.image?.preview : VITE_UPLOADS_URL + step?.image?.preview} alt="preview" style={{ height: '100px', objectFit: 'contain', marginTop: '0.5rem' }} />}
                                         <button className="btn btn-danger btn-sm" style={{ marginTop: '0.5rem', width: 'fit-content' }} onClick={() => removeItemFromArray('veneersSteps', ['steps'], idx)}>Удалить Этап</button>
                                     </div>
                                 </div>

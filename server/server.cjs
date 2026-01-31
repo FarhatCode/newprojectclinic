@@ -17,6 +17,7 @@ const PORT = 3001;
 const DB_FILE = path.join(__dirname, 'db.json');
 const upload = multer({ dest: path.join(__dirname, "../uploads/") });
 const VITE_UPLOADS_URL = process.env.VITE_UPLOADS_URL;
+const VITE_API_URL = process.env.VITE_API_URL;
 
 app.use(cors());
 app.use(express.json());
@@ -269,5 +270,5 @@ app.post('/upload', authMiddleware, upload.single('file'), (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is running on PORT`);
+    console.log(`Server is running on PORT ${VITE_API_URL}`);
 });
