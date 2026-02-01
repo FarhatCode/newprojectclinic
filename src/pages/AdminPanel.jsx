@@ -92,6 +92,10 @@ export default function AdminPanel() {
     const updateNestedContent = (section, path, value) => {
         setContent(prev => {
             const newContent = structuredClone(prev);
+            if (section === 'portfolio') {
+                newContent[section] = value;
+                return newContent;
+            }
             if (!newContent[section]) newContent[section] = {};
             let current = newContent[section];
             for (let i = 0; i < path.length - 1; i++) {
