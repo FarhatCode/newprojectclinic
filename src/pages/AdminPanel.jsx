@@ -615,6 +615,7 @@ export default function AdminPanel() {
                                         })} />
                                     </label>
                                 </div>
+                                {content.visualDiagnostics?.gallery1.map((url, idx) => <img key={idx} src={url} alt="preview" style={{ height: '100px', objectFit: 'contain', marginTop: '0.5rem' }} />)}
                                 <textarea
                                     value={content.visualDiagnostics?.gallery1?.join('\n')}
                                     onChange={e => updateNestedContent('visualDiagnostics', ['gallery1'], e.target.value.split('\n').filter(s => s.trim()))}
@@ -632,6 +633,7 @@ export default function AdminPanel() {
                                         })} />
                                     </label>
                                 </div>
+                                {content.visualDiagnostics?.gallery2.length > 0 && content.visualDiagnostics?.gallery2.map((url, idx) => <img key={idx} src={url} alt="preview" style={{ height: '100px', objectFit: 'contain', marginTop: '0.5rem' }} />)}
                                 <textarea
                                     value={content.visualDiagnostics?.gallery2?.join('\n')}
                                     onChange={e => updateNestedContent('visualDiagnostics', ['gallery2'], e.target.value.split('\n').filter(s => s.trim()))}
@@ -652,6 +654,7 @@ export default function AdminPanel() {
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                     <label>Фото (Слева):</label>
                                     <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                        {content.smileTransform?.column1?.image && <img src={content.smileTransform?.column1?.image} alt="preview" style={{ height: '100px', objectFit: 'contain', marginTop: '0.5rem' }} />}
                                         <input type="text" value={content.smileTransform?.column1?.image} readOnly style={{ flex: 1, padding: '0.5rem' }} />
                                         <label className="btn btn-outline btn-sm" style={{ cursor: 'pointer' }}>
                                             Добавить файл
@@ -669,6 +672,7 @@ export default function AdminPanel() {
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                     <label>Фото врача:</label>
                                     <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                        {content.smileTransform?.column3?.image && <img src={content.smileTransform?.column3?.image} alt="preview" style={{ height: '100px', objectFit: 'contain', marginTop: '0.5rem' }} />}
                                         <input type="text" value={content.smileTransform?.column3?.image} readOnly style={{ flex: 1, padding: '0.5rem' }} />
                                         <label className="btn btn-outline btn-sm" style={{ cursor: 'pointer' }}>
                                             Добавить файл
@@ -740,6 +744,7 @@ export default function AdminPanel() {
                                 <h3>Инстаграм</h3>
                                 <button className="btn btn-primary" onClick={() => saveSectionToServer('instagram')}>Сохранить</button>
                             </div>
+                            {content.instagram?.image && <img src={content.instagram?.image} alt="preview" style={{ height: '200px', objectFit: 'contain', marginTop: '0.5rem' }} />}
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                 <label>URL Фото (Instagram Overlay):</label>
                                 <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -800,6 +805,7 @@ export default function AdminPanel() {
                                                     })} />
                                                 </label>
                                             </div>
+                                            {doc.image && <img src={doc.image} alt="preview" style={{ height: '100px', objectFit: 'contain', marginTop: '0.5rem' }} />}
                                         </div>
                                         <button className="btn btn-danger btn-sm" style={{ marginTop: '0.5rem' }} onClick={() => removeItemFromArray('doctors', [], idx)}>Удалить врача</button>
                                     </div>
@@ -815,18 +821,21 @@ export default function AdminPanel() {
                                 <button className="btn btn-primary" onClick={() => saveSectionToServer('portfolio')}>Сохранить</button>
                             </div>
                             {content.portfolio?.map((item, idx) => (
-                                <div key={idx} style={{ marginBottom: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                                    <input type="text" value={item.image} readOnly style={{ flex: 1, padding: '0.4rem' }} placeholder="Фото" />
-                                    <label className="btn btn-outline btn-sm" style={{ cursor: 'pointer' }}>
-                                        Добавить файл
-                                        <input type="file" hidden onChange={e => handleFileUpload(e, url => {
-                                            const n = [...content.portfolio];
-                                            n[idx].image = url;
-                                            updateNestedContent('portfolio', [], n);
-                                        })} />
-                                    </label>
-                                    <button className="btn btn-danger btn-sm" onClick={() => removeItemFromArray('portfolio', [], idx)}>Удалить</button>
-                                </div>
+                                <>
+                                    <div key={idx} style={{ marginBottom: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                        <input type="text" value={item.image} readOnly style={{ flex: 1, padding: '0.4rem' }} placeholder="Фото" />
+                                        <label className="btn btn-outline btn-sm" style={{ cursor: 'pointer' }}>
+                                            Добавить файл
+                                            <input type="file" hidden onChange={e => handleFileUpload(e, url => {
+                                                const n = [...content.portfolio];
+                                                n[idx].image = url;
+                                                updateNestedContent('portfolio', [], n);
+                                            })} />
+                                        </label>
+                                        <button className="btn btn-danger btn-sm" onClick={() => removeItemFromArray('portfolio', [], idx)}>Удалить</button>
+                                    </div>
+                                    {item.image && <img src={item.image} alt="preview" style={{ height: '100px', objectFit: 'contain', marginTop: '0.5rem' }} />}
+                                </>
                             ))}
                             <button className="btn btn-outline" onClick={() => addItemToArray('portfolio', [], { image: '' })}>+ Добавить фото</button>
                         </div>
