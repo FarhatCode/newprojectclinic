@@ -26,8 +26,8 @@ export default function Header({ onOpenModal, content }) {
 
       <header className="site-header">
         <div className="container header-container">
-          <Link to="/" className="logo" onClick={closeMenu}>
-            Clinic<span className="logo-accent">Premier</span>
+          <Link to="/" className="logo" onClick={closeMenu} style={{ height: '70px', width: '130px' }}>
+            <img src="logo.png" alt="" height={250} width={250} style={{ position: 'absolute', marginLeft: '-40px' }} />
           </Link>
 
           <div className={`nav-menu ${isOpen ? 'active' : ''} nav-menu-left`}>
