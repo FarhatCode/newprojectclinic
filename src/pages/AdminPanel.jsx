@@ -364,6 +364,7 @@ export default function AdminPanel() {
                     <div className="grid grid-2" style={{ marginTop: '1rem' }}>
                         {services.map(service => (
                             <div key={service.id} style={{ padding: '1rem', border: '1px solid var(--border)', borderRadius: '8px' }}>
+                                {service.icon && <img src={service.icon} alt={service.title} style={{ height: '200px', borderRadius: '8px' }} />}
                                 <div style={{ fontSize: '2rem' }}>{service.icon}</div>
                                 <h3>{service.title}</h3>
                                 <p>{service.desc}</p>
