@@ -17,7 +17,7 @@ export default function About({ data }) {
                 <div className="about-content">
                     <h2 className="section-title text-left">О нашей клинике</h2>
                     <p className="about-text">
-                        Clinic Premier — это команда профессионалов, которые горят своим делом.
+                        CONCEPT CLINIC — это команда профессионалов, которые горят своим делом.
                         Мы объединили передовые технологии, уютную атмосферу и многолетний опыт,
                         чтобы ваше лечение было максимально комфортным и эффективным.
                     </p>

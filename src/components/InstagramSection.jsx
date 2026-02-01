@@ -12,7 +12,7 @@ export default function InstagramSection({ data }) {
                 <div className="instagram-container">
                     <img src={data?.image} alt="Instagram profile" className="instagram-image" />
                     <div className="insta-overlay">
-                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="insta-btn">
+                        <a href={data?.link || "https://instagram.com"} target="_blank" rel="noopener noreferrer" className="insta-btn">
                             Подписаться в Instagram
                         </a>
                     </div>

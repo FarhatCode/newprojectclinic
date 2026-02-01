@@ -96,7 +96,7 @@ export default function Footer({ content }) {
 
                 <div className="footer-bottom">
                     <div className="copyright">
-                        &copy; 2026 Clinic Premier. Все права защищены.
+                        &copy; 2026 CONCEPT CLINIC. Все права защищены.
                     </div>
                     <div className="footer-nav">
                         <a href="#">Политика конфиденциальности</a>

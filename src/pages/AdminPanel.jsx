@@ -41,6 +41,8 @@ export default function AdminPanel() {
                 if (!data.doctors) data.doctors = [];
                 if (!data.portfolio) data.portfolio = [];
                 if (!data.price) data.price = [];
+                if (!data.instagram) data.instagram = { image: '', link: '' };
+                if (data.instagram && !data.instagram.link) data.instagram.link = '';
                 if (!data.contact) data.contact = { address: '', phone: '', email: '', hours: '', vk: '', tg: '', wa: '' };
 
                 setContent(data);
@@ -759,6 +761,9 @@ export default function AdminPanel() {
                                         <input type="file" hidden onChange={e => handleFileUpload(e, url => updateNestedContent('instagram', ['image'], url))} />
                                     </label>
                                 </div>
+                                <label style={{ marginTop: '0.5rem' }}>Ссылка на Instagram:
+                                    <input type="text" value={content.instagram?.link} onChange={e => updateNestedContent('instagram', ['link'], e.target.value)} style={{ width: '100%', padding: '0.5rem', marginTop: '0.2rem' }} />
+                                </label>
                             </div>
                         </div>
 

@@ -103,19 +103,18 @@
       "title": "Визуальная диагностика",
       "text": "В нашей клинике пациенты в обязательном порядке проходят фотопротокол, где изображение выводится на большие телевизионные мониторы, что позволяет пациентам видеть все проблемы в своей полости рта.",
       "gallery1": [
-        "http://localhost:3001/uploads/5d98acba4b12df35598fc4075c8c46b0",
-        "http://localhost:3001/uploads/48c1f23e77648816a5c737b2516d07e7",
-        "http://localhost:3001/uploads/32b4097353464228a162e6be29d952d2",
-        "http://localhost:3001/uploads/7bc9dbac76f96741b00cb949788df292",
-        "http://localhost:3001/uploads/14b295351e44627b69a6887a2511d6ea"
+        "http://clinic-tooth.ru/uploads/0fc14232535a84ecc2f5fc138f04c234",
+        "http://clinic-tooth.ru/uploads/0d53f4ec8ea6e4c371bafe29d5268228",
+        "http://clinic-tooth.ru/uploads/abe67aa9f382ad2b99e6dfd6137150cd",
+        "http://clinic-tooth.ru/uploads/4705abc94648b83881879f2f3b28cd3c",
+        "http://clinic-tooth.ru/uploads/b322548c13e1f8d5d92d6c8e6241ef5d"
       ],
       "gallery2": [
-        "/gallery2-1.png",
-        "/gallery2-2.png",
-        "/gallery2-3.png",
-        "/gallery2-4.png",
-        "/gallery2-5.png",
-        "/gallery2-6.png"
+        "http://clinic-tooth.ru/uploads/0739ae187021abbc97cfca619059babc",
+        "http://clinic-tooth.ru/uploads/efea6ca540217a3b8dd0ce974f5d6695",
+        "http://clinic-tooth.ru/uploads/3052d44df88e06d505e00eefa4bf4783",
+        "http://clinic-tooth.ru/uploads/cfe871439d9eed65c37707da00872f0a",
+        "http://clinic-tooth.ru/uploads/6f5f07bd2633992a50dcf1ef990c8a44"
       ]
     },
     "smileTransform": {
@@ -149,7 +148,7 @@
           "textResult": "Ваши зубы готовы к установке виниров. После обточки устанавливается временная форма: она защищает зубы во время изготовления виниров.",
           "image": {
             "file": {},
-            "preview": "/uploads/9059c6c75d452786f9e6b560f9cc19b3"
+            "preview": "http://clinic-tooth.ru/uploads/0677f31c57c8d4844fcb7bc5473ed0b4"
           }
         },
         {
@@ -170,15 +169,7 @@
           "textOriginal": "Готовые виниры по внешнему виду не отличаются от настоящих зубов: мы добиваемся естественного цвета, рельефности и глянцевой поверхности. Виниры крепятся к зубу биологически совместимым составом и надежно фиксируются.",
           "textResult": "Вы сможете увидеть, как будет выглядеть ваша улыбка после установки виниров, и при необходимости скорректировать детали."
         }
-      ],
-      "promo": {
-        "avatars": [
-          "/tooth.png",
-          "/tooth-2.png",
-          "/tooth-3.png"
-        ],
-        "text": "Не откладывайте на потом свою красоту. Запишитесь на диагностику!"
-      }
+      ]
     },
     "instagram": {
       "image": "/hero-2.png"
@@ -202,22 +193,22 @@
     ],
     "portfolio": [
       {
-        "image": "/portfolio-1.png"
+        "image": "http://clinic-tooth.ru/uploads/f246163dfdc51bcbdec8698867ce5cfa"
       },
       {
-        "image": "/portfolio-2.png"
+        "image": "http://clinic-tooth.ru/uploads/fa55da3e097700d515c011de8e6bdd10"
       },
       {
-        "image": "/portfolio-3.png"
+        "image": "http://clinic-tooth.ru/uploads/2da0c872166eb71b2aca917b78f64b28"
       },
       {
-        "image": "/portfolio-4.png"
+        "image": "http://clinic-tooth.ru/uploads/1da22a3b593781113f551d93e127c14e"
       },
       {
-        "image": "/portfolio-5.png"
+        "image": "http://clinic-tooth.ru/uploads/2828cf49520a34c22b0021964dad135b"
       },
       {
-        "image": "/portfolio-6.png"
+        "image": "http://clinic-tooth.ru/uploads/bf1d81bfa791cdca34e23ac214ff94b3"
       }
     ],
     "price": [
@@ -233,17 +224,17 @@
       }
     ],
     "contact": {
-      "address": "г. Тюмень, ул. , 5",
-      "phone": "+7 (999) 123-45-67",
-      "email": "info@clinicpremier.ru",
+      "address": "г. Нефтеюганск ул. Ленина 1 мкр дом 24",
+      "phone": "+7 922 007 0042",
+      "email": "dr.saidadzhiev.clinic@mail.ru",
       "hours": "Ежедневно: 09:00 - 21:00",
       "vk": "#3",
-      "tg": "https://t.me/username",
-      "wa": "https://wa.me/79991234567"
+      "tg": "https://t.me/89220070042",
+      "wa": "https://wa.me/https://t.me/79220070042"
     },
     "map": {
-      "iframe": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2179.35624738722!2d65.529892!3d57.151326!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x43bbe39d88cc2e3b%3A0xe5f92263dae20d91!2z0YPQuy4g0JvQtdC90LjQvdCwLCA1MCwg0KLRjtC80LXQvdGMLCDQotGO0LzQtdC90YHQutCw0Y8g0L7QsdC7LiwgNjI1MDAz!5e0!3m2!1sru!2sru!4v1716900000000!5m2!1sru!2sru",
-      "link": "https://2gis.ru/tyumen/search/%D0%9B%D0%B5%D0%BD%D0%B8%D0%BD%D0%B0%2050"
+      "iframe": "https://go.2gis.com/ALBgR",
+      "link": "https://2gis.ru/nefteyugansk/geo/5489397701027776"
     },
     "appointments": [
       {
@@ -256,6 +247,6 @@
     ]
   },
   "settings": {
-    "password": "96b464e7718855ee370095c8013b8335:23d35eeac43bcc997df73e14f22c6ce539da79c4c4020c8c27583557e9c21c3e1a601bd2974cc1c3357c5088fbbb1423d2d0506b0308391f8dac55c9cd1704f7"
+    "password": "1a1c8938a819473c42f71b79d4923ba6:dfaff8d475775979bf4b209a4001d3c01424531cdbf25b5b15640f6edc5ff41c186a28c04b53b64034aeac6674eaa6c334402c8288c8374462c67972090a029e"
   }
 }

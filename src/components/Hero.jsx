@@ -21,7 +21,7 @@ export default function Hero({ onOpenModal, data }) {
                         <span className="text-highlight">ваша уверенность</span>
                     </h1>
                     <p className="hero-subtitle">
-                        Современная стоматология Clinic Premier в Тюмени.
+                        Современная стоматология CONCEPT CLINIC в Нефтеюганск.
                         Лечение без боли, гарантия качества и забота о каждом пациенте.
                     </p>
                     <div className="hero-actions">
