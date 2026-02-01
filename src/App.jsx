@@ -47,7 +47,7 @@ function App() {
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/prices" element={<Prices price={content?.price} />} />
           <Route path="/reviews" element={<Reviews />} />
-          <Route path="/contacts" element={<ContactPage content={content?.contact} />} />
+          <Route path="/contacts" element={<ContactPage content={content} />} />
           <Route path="/admin" element={<AdminPanel />} />
         </Routes>
 
