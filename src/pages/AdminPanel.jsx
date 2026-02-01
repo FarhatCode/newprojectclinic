@@ -280,7 +280,7 @@ export default function AdminPanel() {
         })
             .then(res => res.json())
             .then(updated => {
-                setAppointments(appointments.map(a => a.id === id ? updated : a));
+                setAppointments(appointments.map(a => Number(a.id) === Number(id) ? updated : a));
             })
             .catch(console.error);
     };
@@ -292,7 +292,7 @@ export default function AdminPanel() {
             headers: { 'Authorization': `Bearer ${token}` }
         })
             .then(() => {
-                setAppointments(appointments.filter(a => a.id !== id));
+                setAppointments(appointments.filter(a => Number(a.id) !== Number(id)));
             })
             .catch(console.error);
     };

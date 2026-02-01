@@ -200,7 +200,7 @@ app.put('/api/appointments/:id', authMiddleware, (req, res) => {
     const db = readDb();
     const { id } = req.params;
     const { status } = req.body;
-    const index = db.appointments.findIndex(a => a.id == id);
+    const index = db.appointments.findIndex(a => a.id == Number(id));
     if (index !== -1) {
         db.appointments[index].status = status;
         writeDb(db);
