@@ -37,7 +37,7 @@ export default function AdminPanel() {
                         gallery2: []
                     };
                 }
-                if (!data.map) data.map = { iframe: '' };
+                if (!data.map) data.map = { iframe: '', link: '' };
                 if (!data.doctors) data.doctors = [];
                 if (!data.portfolio) data.portfolio = [];
                 if (!data.price) data.price = [];
@@ -758,9 +758,14 @@ export default function AdminPanel() {
                                 <h3>Карта (Map)</h3>
                                 <button className="btn btn-primary" onClick={() => saveSectionToServer('map')}>Сохранить</button>
                             </div>
-                            <label>Iframe URL:
-                                <input type="text" value={content.map?.iframe} onChange={e => updateNestedContent('map', ['iframe'], e.target.value)} style={{ width: '100%', padding: '0.5rem', marginTop: '0.5rem' }} />
-                            </label>
+                            <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
+                                <label>Iframe URL:
+                                    <input type="text" value={content.map?.iframe} onChange={e => updateNestedContent('map', ['iframe'], e.target.value)} style={{ width: '100%', padding: '0.5rem', marginTop: '0.5rem' }} />
+                                </label>
+                                <label>2GIS / Map Link:
+                                    <input type="text" value={content.map?.link} onChange={e => updateNestedContent('map', ['link'], e.target.value)} style={{ width: '100%', padding: '0.5rem', marginTop: '0.5rem' }} />
+                                </label>
+                            </div>
                         </div>
 
                         {/* Doctors Section */}
