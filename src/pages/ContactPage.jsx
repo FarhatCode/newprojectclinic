@@ -31,7 +31,7 @@ export default function ContactPage({ content }) {
                     </div>
                 </div>
                 <div className="map-placeholder">
-                    <Map data={content?.map} />
+                    <Map data={content?.map}
                 </div>
             </div>
         </div>

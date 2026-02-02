@@ -16,8 +16,8 @@ const app = express();
 const PORT = 3001;
 const DB_FILE = path.join(__dirname, 'db.json');
 const upload = multer({ dest: path.join(__dirname, "../uploads/") });
-const VITE_UPLOADS_URL = process.env.VITE_UPLOADS_URL;
-const VITE_API_URL = process.env.VITE_API_URL;
+const VITE_API_URL = process.env.VITE_UPLOADS_URL;
+const VITE_API_URL = process.env.VITE_UPLOADS_URL;
 
 app.use(cors());
 app.use(express.json());
@@ -184,39 +184,10 @@ app.get('/api/appointments', authMiddleware, (req, res) => {
 app.post('/api/appointments', (req, res) => {
     const db = readDb();
     if (!db.appointments) db.appointments = [];
-    const newAppointment = {
-        id: Date.now(),
-        ...req.body,
-        status: 'new', // Default status
-        date: new Date().toISOString()
-    };
+    const newAppointment = { id: Date.now(), ...req.body, date: new Date().toISOString() };
     db.appointments.push(newAppointment);
     writeDb(db);
     res.status(201).json(newAppointment);
-});
-
-// Update Appointment Status (Protected)
-app.put('/api/appointments/:id', authMiddleware, (req, res) => {
-    const db = readDb();
-    const { id } = req.params;
-    const { status } = req.body;
-    const index = db.appointments.findIndex(a => a.id == Number(id));
-    if (index !== -1) {
-        db.appointments[index].status = status;
-        writeDb(db);
-        res.json(db.appointments[index]);
-    } else {
-        res.status(404).json({ error: 'Appointment not found' });
-    }
-});
-
-// DELETE Appointment (Protected)
-app.delete('/api/appointments/:id', authMiddleware, (req, res) => {
-    const db = readDb();
-    const { id } = req.params;
-    db.appointments = db.appointments.filter(a => a.id != Number(id));
-    writeDb(db);
-    res.status(204).send();
 });
 
 // GET Content
