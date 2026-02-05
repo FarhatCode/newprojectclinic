@@ -94,15 +94,17 @@ export default function AdminPanel() {
     const updateNestedContent = (section, path, value) => {
         setContent(prev => {
             const newContent = structuredClone(prev);
-            if (section === 'portfolio') {
+            // Если путь пустой — заменяем весь раздел целиком
+            if (!path || path.length === 0) {
                 newContent[section] = value;
                 return newContent;
             }
             if (!newContent[section]) newContent[section] = {};
             let current = newContent[section];
             for (let i = 0; i < path.length - 1; i++) {
-                if (!current[path[i]]) current[path[i]] = {};
-                current = current[path[i]];
+                const key = path[i];
+                if (current[key] === undefined) current[key] = {};
+                current = current[key];
             }
             current[path[path.length - 1]] = value;
             return newContent;
@@ -112,11 +114,23 @@ export default function AdminPanel() {
     const addItemToArray = (section, path, newItem) => {
         setContent(prev => {
             const newContent = structuredClone(prev);
+            // Если путь пустой — работаем с корневым массивом секции
+            if (!path || path.length === 0) {
+                if (!Array.isArray(newContent[section])) newContent[section] = [];
+                newContent[section].push(newItem);
+                return newContent;
+            }
             if (!newContent[section]) newContent[section] = {};
             let current = newContent[section];
             for (let i = 0; i < path.length; i++) {
-                if (!current[path[i]]) current[path[i]] = [];
-                current = current[path[i]];
+                const key = path[i];
+                if (i === path.length - 1) {
+                    if (!Array.isArray(current[key])) current[key] = [];
+                    current = current[key];
+                } else {
+                    if (current[key] === undefined) current[key] = {};
+                    current = current[key];
+                }
             }
             current.push(newItem);
             return newContent;
@@ -126,11 +140,20 @@ export default function AdminPanel() {
     const removeItemFromArray = (section, path, index) => {
         setContent(prev => {
             const newContent = structuredClone(prev);
+            // Если путь пустой — работаем с корневым массивом секции
+            if (!path || path.length === 0) {
+                if (!Array.isArray(newContent[section])) return newContent;
+                newContent[section].splice(index, 1);
+                return newContent;
+            }
+            if (!newContent[section]) return newContent;
             let current = newContent[section];
             for (let i = 0; i < path.length; i++) {
-                current = current[path[i]];
+                const key = path[i];
+                if (current[key] === undefined) return newContent;
+                current = current[key];
             }
-            current.splice(index, 1);
+            if (Array.isArray(current)) current.splice(index, 1);
             return newContent;
         });
     };
@@ -162,8 +185,7 @@ export default function AdminPanel() {
         try {
             const data = content[section];
             let response;
-
-            const hasFile = data.steps?.some(step => step.image?.file instanceof File);
+            const hasFile = data?.steps?.some(step => step.image?.file instanceof File);
 
             if (hasFile && section === 'veneersSteps') {
                 const formData = new FormData();
@@ -192,16 +214,26 @@ export default function AdminPanel() {
             } else {
                 const preparedData = {
                     ...data,
-                    gallery1: data.gallery1,
-                    gallery2: data.gallery2
+                    gallery1: data?.gallery1,
+                    gallery2: data?.gallery2
                 };
+
+                const normalize = (d) => {
+                    if (Array.isArray(d)) return d;
+                    if (!d || typeof d !== 'object') return d;
+                    return Object.values(d).filter(item => item !== null && item !== undefined);
+                };
+
+                const arraySections = ['doctors', 'portfolio', 'price'];
+                const payloadData = arraySections.includes(section) ? normalize(preparedData) : preparedData;
+
                 response = await fetch(`${API_URL}/content`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ section, data: preparedData })
+                    body: JSON.stringify({ section, data: payloadData })
                 });
             }
 
