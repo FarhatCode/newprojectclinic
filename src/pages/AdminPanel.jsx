@@ -158,12 +158,179 @@ export default function AdminPanel() {
         });
     };
 
+    const canEncodeToType = (() => {
+        const cache = {};
+        return (type) => {
+            if (cache[type] !== undefined) return Promise.resolve(cache[type]);
+            return new Promise((resolve) => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 1;
+                canvas.height = 1;
+                canvas.toBlob((blob) => {
+                    const supported = !!blob && blob.type === type;
+                    cache[type] = supported;
+                    resolve(supported);
+                }, type);
+            });
+        };
+    })();
+
+    const buildOutputName = (originalName, outputMimeType, keepOriginalName) => {
+        // keepOriginalName=true keeps the filename as-is (including extension).
+        if (keepOriginalName) return originalName;
+        const base = originalName.replace(/\.[^/.]+$/, '');
+        if (outputMimeType === 'image/webp') return `${base}.webp`;
+        if (outputMimeType === 'image/jpeg') return `${base}.jpg`;
+        return originalName;
+    };
+
+    const optimizeImageFile = async (file, options = {}) => {
+        const {
+            maxWidth = 1920,
+            maxHeight = 1920,
+            quality = 0.8,
+            preserveAlpha = true,
+            pngAlphaQuality = 0.92,
+            keepOriginalName = false,
+            fallbackToOriginal = true,
+            respectExif = true
+        } = options;
+
+        if (!file || !file.type?.startsWith('image/')) return file;
+
+        const isPngOrJpeg = ['image/png', 'image/jpeg', 'image/jpg'].includes(file.type);
+        if (!isPngOrJpeg) return file;
+
+        let sourceBitmap = null;
+        let sourceImage = null;
+        let objectUrl = null;
+
+        try {
+            if (typeof createImageBitmap === 'function') {
+                // Browsers that support this can respect EXIF orientation with `from-image`.
+                try {
+                    sourceBitmap = await createImageBitmap(file, {
+                        imageOrientation: respectExif ? 'from-image' : 'none'
+                    });
+                } catch {
+                    sourceBitmap = await createImageBitmap(file);
+                }
+            } else {
+                sourceImage = await new Promise((resolve, reject) => {
+                    const img = new Image();
+                    objectUrl = URL.createObjectURL(file);
+                    img.onload = () => resolve(img);
+                    img.onerror = reject;
+                    img.src = objectUrl;
+                });
+            }
+
+            const srcWidth = sourceBitmap ? sourceBitmap.width : sourceImage.width;
+            const srcHeight = sourceBitmap ? sourceBitmap.height : sourceImage.height;
+            const scale = Math.min(1, maxWidth / srcWidth, maxHeight / srcHeight);
+            const width = Math.max(1, Math.round(srcWidth * scale));
+            const height = Math.max(1, Math.round(srcHeight * scale));
+
+            const useOffscreen = typeof OffscreenCanvas !== 'undefined';
+            const canvas = useOffscreen
+                ? new OffscreenCanvas(width, height)
+                : Object.assign(document.createElement('canvas'), { width, height });
+
+            const ctx = canvas.getContext('2d', { alpha: preserveAlpha });
+            if (!ctx) return fallbackToOriginal ? file : null;
+
+            if (!preserveAlpha) {
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, width, height);
+            }
+
+            ctx.drawImage(sourceBitmap || sourceImage, 0, 0, width, height);
+
+            const supportsWebP = await canEncodeToType('image/webp');
+            const outputMimeType = supportsWebP ? 'image/webp' : 'image/jpeg';
+            const outputQuality = file.type === 'image/png' && preserveAlpha && supportsWebP
+                ? pngAlphaQuality
+                : quality;
+
+            const blob = useOffscreen
+                ? await canvas.convertToBlob({ type: outputMimeType, quality: outputQuality })
+                : await new Promise((resolve) => {
+                    canvas.toBlob(resolve, outputMimeType, outputQuality);
+                });
+
+            if (!blob) return fallbackToOriginal ? file : null;
+
+            // If fallbackToOriginal is enabled, return the smaller file.
+            if (fallbackToOriginal && blob.size >= file.size) return file;
+
+            const outputName = buildOutputName(file.name, outputMimeType, keepOriginalName);
+            return new File([blob], outputName, {
+                type: outputMimeType,
+                lastModified: file.lastModified
+            });
+        } catch {
+            return fallbackToOriginal ? file : null;
+        } finally {
+            if (sourceBitmap && typeof sourceBitmap.close === 'function') sourceBitmap.close();
+            if (objectUrl) URL.revokeObjectURL(objectUrl);
+        }
+    };
+
+    const optimizeImageFilesBatch = async (files, options = {}, concurrency = 3) => {
+        const list = Array.from(files || []);
+        if (list.length === 0) return [];
+
+        const limit = Math.max(1, Number(concurrency) || 1);
+        const results = new Array(list.length);
+        const onProgress = typeof options.onProgress === 'function' ? options.onProgress : null;
+        let cursor = 0;
+        let done = 0;
+
+        const reportProgress = (index, success) => {
+            done += 1;
+            if (onProgress) {
+                onProgress({
+                    done,
+                    total: list.length,
+                    index,
+                    success
+                });
+            }
+        };
+
+        const worker = async () => {
+            while (cursor < list.length) {
+                const index = cursor++;
+                try {
+                    const optimized = await optimizeImageFile(list[index], options);
+                    results[index] = optimized;
+                    reportProgress(index, !!optimized);
+                } catch {
+                    results[index] = options.fallbackToOriginal === false ? null : list[index];
+                    reportProgress(index, !!results[index]);
+                }
+            }
+        };
+
+        await Promise.allSettled(Array.from({ length: Math.min(limit, list.length) }, worker));
+        return results.filter(Boolean);
+    };
+
     const handleFileUpload = async (e, callback) => {
         const file = e.target.files[0];
         if (!file) return;
+        if (!file.type?.startsWith('image/')) {
+            alert('Пожалуйста, выберите изображение');
+            return;
+        }
 
         const formData = new FormData();
-        formData.append('file', file);
+        const [optimizedFile] = await optimizeImageFilesBatch([file], {
+            preserveAlpha: true,
+            keepOriginalName: false,
+            fallbackToOriginal: true
+        }, 1);
+        formData.append('file', optimizedFile);
 
         try {
             const res = await fetch(`${VITE_UPLOADS_URL}/upload`, {
@@ -178,6 +345,8 @@ export default function AdminPanel() {
         } catch (err) {
             console.error('Upload error:', err);
             alert('Ошибка при загрузке файла');
+        } finally {
+            e.target.value = '';
         }
     };
 
@@ -758,11 +927,12 @@ export default function AdminPanel() {
                                                 <input type="text" value={step.image?.preview || step.image || ''} readOnly style={{ flex: 1, padding: '0.5rem' }} placeholder="Путь к фото" />
                                                 <label className="btn btn-outline btn-sm" style={{ cursor: 'pointer' }}>
                                                     Добавить файл
-                                                    <input type="file" hidden onChange={e => {
+                                                    <input type="file" hidden onChange={async e => {
                                                         const file = e.target.files[0];
                                                         if (file) {
+                                                            const optimizedFile = await optimizeImageFile(file);
                                                             const n = [...content.veneersSteps.steps];
-                                                            n[idx].image = { file, preview: URL.createObjectURL(file) };
+                                                            n[idx].image = { file: optimizedFile, preview: URL.createObjectURL(optimizedFile) };
                                                             updateNestedContent('veneersSteps', ['steps'], n);
                                                         }
                                                     }} />
