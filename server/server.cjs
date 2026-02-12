@@ -15,7 +15,8 @@ const multer = require('multer');
 const app = express();
 const PORT = 3001;
 const DB_FILE = path.join(__dirname, 'db.json');
-const upload = multer({ dest: path.join(__dirname, "../uploads/") });
+const UPLOADS_DIR = path.join(__dirname, "../uploads/");
+const upload = multer({ dest: UPLOADS_DIR });
 const VITE_UPLOADS_URL = process.env.VITE_UPLOADS_URL;
 const VITE_API_URL = process.env.VITE_API_URL;
 
@@ -105,6 +106,68 @@ const writeDb = (data) => {
     fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
 };
 
+const collectUploadUrlsDeep = (value, accumulator = new Set()) => {
+    if (value === null || value === undefined) return accumulator;
+
+    if (typeof value === 'string') {
+        if (value.includes('/uploads/')) accumulator.add(value);
+        return accumulator;
+    }
+
+    if (Array.isArray(value)) {
+        value.forEach((item) => collectUploadUrlsDeep(item, accumulator));
+        return accumulator;
+    }
+
+    if (typeof value === 'object') {
+        Object.values(value).forEach((item) => collectUploadUrlsDeep(item, accumulator));
+    }
+
+    return accumulator;
+};
+
+const getUploadFilenameFromUrl = (urlValue) => {
+    if (!urlValue || typeof urlValue !== 'string') return null;
+    const marker = '/uploads/';
+    const markerIndex = urlValue.indexOf(marker);
+    if (markerIndex === -1) return null;
+
+    const tail = urlValue.slice(markerIndex + marker.length);
+    const cleanTail = tail.split('?')[0].split('#')[0].trim();
+    if (!cleanTail) return null;
+
+    const filename = path.basename(cleanTail);
+    if (!filename || filename.includes('..') || filename !== cleanTail) return null;
+    return filename;
+};
+
+const deleteUploadByUrl = (urlValue) => {
+    const filename = getUploadFilenameFromUrl(urlValue);
+    if (!filename) return;
+
+    const filePath = path.join(UPLOADS_DIR, filename);
+    if (!filePath.startsWith(path.resolve(UPLOADS_DIR))) return;
+
+    if (fs.existsSync(filePath)) {
+        try {
+            fs.unlinkSync(filePath);
+        } catch (error) {
+            console.error(`Failed to delete upload file "${filePath}":`, error);
+        }
+    }
+};
+
+const deleteUnusedUploads = (oldUrlsSet, dbAfterUpdate) => {
+    if (!oldUrlsSet || oldUrlsSet.size === 0) return;
+    const usedAfterUpdate = collectUploadUrlsDeep(dbAfterUpdate, new Set());
+
+    oldUrlsSet.forEach((oldUrl) => {
+        if (!usedAfterUpdate.has(oldUrl)) {
+            deleteUploadByUrl(oldUrl);
+        }
+    });
+};
+
 // Initialize DB if not exists
 if (!fs.existsSync(DB_FILE)) {
     const initialData = {
@@ -169,8 +232,15 @@ app.put('/api/services/:id', authMiddleware, (req, res) => {
 app.delete('/api/services/:id', authMiddleware, (req, res) => {
     const db = readDb();
     const { id } = req.params;
-    db.services = db.services.filter(s => s.id != id);
+    const serviceToDelete = db.services.find((s) => s.id == id);
+    db.services = db.services.filter((s) => s.id != id);
     writeDb(db);
+
+    if (serviceToDelete?.icon) {
+        const iconRefs = new Set([serviceToDelete.icon]);
+        deleteUnusedUploads(iconRefs, db);
+    }
+
     res.status(204).send();
 });
 
@@ -252,6 +322,7 @@ app.put('/api/reviews/:id', authMiddleware, (req, res) => {
 app.post('/api/content', authMiddleware, upload.any(), (req, res) => {
     const db = readDb();
     const { section, data } = req.body;
+    const oldSectionUploadUrls = section ? collectUploadUrlsDeep(db.content?.[section], new Set()) : new Set();
 
     if (section === "veneersSteps") {
         let steps = [];
@@ -288,6 +359,9 @@ app.post('/api/content', authMiddleware, upload.any(), (req, res) => {
     }
 
     writeDb(db);
+    if (section) {
+        deleteUnusedUploads(oldSectionUploadUrls, db);
+    }
     res.json(db.content);
 });
 

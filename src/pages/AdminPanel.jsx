@@ -158,6 +158,20 @@ export default function AdminPanel() {
         });
     };
 
+    const updateVisualGalleryImage = (galleryKey, index, newUrl) => {
+        const current = content?.visualDiagnostics?.[galleryKey] || [];
+        const updated = [...current];
+        updated[index] = newUrl;
+        updateNestedContent('visualDiagnostics', [galleryKey], updated);
+    };
+
+    const removeVisualGalleryImage = (galleryKey, index) => {
+        const current = content?.visualDiagnostics?.[galleryKey] || [];
+        const updated = [...current];
+        updated.splice(index, 1);
+        updateNestedContent('visualDiagnostics', [galleryKey], updated);
+    };
+
     const canEncodeToType = (() => {
         const cache = {};
         return (type) => {
@@ -365,7 +379,8 @@ export default function AdminPanel() {
                     id: step.id,
                     title: step.title,
                     textOriginal: step.textOriginal,
-                    textResult: step.textResult
+                    textResult: step.textResult,
+                    image: typeof step.image === 'string' ? step.image : (step.image?.preview || '')
                 }));
                 formData.append("steps", JSON.stringify(stepsWithoutFiles));
 
@@ -823,12 +838,17 @@ export default function AdminPanel() {
                                         })} />
                                     </label>
                                 </div>
-                                {content.visualDiagnostics?.gallery1.map((url, idx) => <img key={idx} src={url} alt="preview" style={{ height: '100px', objectFit: 'contain', marginTop: '0.5rem' }} />)}
-                                <textarea
-                                    value={content.visualDiagnostics?.gallery1?.join('\n')}
-                                    onChange={e => updateNestedContent('visualDiagnostics', ['gallery1'], e.target.value.split('\n').filter(s => s.trim()))}
-                                    style={{ width: '100%', padding: '0.5rem' }} rows="5"
-                                />
+                                {(content.visualDiagnostics?.gallery1 || []).map((url, idx) => (
+                                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+                                        <img src={url} alt="preview" style={{ height: '100px', objectFit: 'contain' }} />
+                                        <input type="text" value={url} readOnly style={{ flex: 1, padding: '0.4rem', minWidth: '240px' }} />
+                                        <label className="btn btn-outline btn-sm" style={{ cursor: 'pointer' }}>
+                                            Добавить файл
+                                            <input type="file" hidden onChange={e => handleFileUpload(e, newUrl => updateVisualGalleryImage('gallery1', idx, newUrl))} />
+                                        </label>
+                                        <button className="btn btn-danger btn-sm" onClick={() => removeVisualGalleryImage('gallery1', idx)}>Удалить</button>
+                                    </div>
+                                ))}
                             </div>
                             <div style={{ marginTop: '1rem' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
@@ -841,12 +861,17 @@ export default function AdminPanel() {
                                         })} />
                                     </label>
                                 </div>
-                                {content.visualDiagnostics?.gallery2.length > 0 && content.visualDiagnostics?.gallery2.map((url, idx) => <img key={idx} src={url} alt="preview" style={{ height: '100px', objectFit: 'contain', marginTop: '0.5rem' }} />)}
-                                <textarea
-                                    value={content.visualDiagnostics?.gallery2?.join('\n')}
-                                    onChange={e => updateNestedContent('visualDiagnostics', ['gallery2'], e.target.value.split('\n').filter(s => s.trim()))}
-                                    style={{ width: '100%', padding: '0.5rem' }} rows="5"
-                                />
+                                {(content.visualDiagnostics?.gallery2 || []).map((url, idx) => (
+                                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+                                        <img src={url} alt="preview" style={{ height: '100px', objectFit: 'contain' }} />
+                                        <input type="text" value={url} readOnly style={{ flex: 1, padding: '0.4rem', minWidth: '240px' }} />
+                                        <label className="btn btn-outline btn-sm" style={{ cursor: 'pointer' }}>
+                                            Добавить файл
+                                            <input type="file" hidden onChange={e => handleFileUpload(e, newUrl => updateVisualGalleryImage('gallery2', idx, newUrl))} />
+                                        </label>
+                                        <button className="btn btn-danger btn-sm" onClick={() => removeVisualGalleryImage('gallery2', idx)}>Удалить</button>
+                                    </div>
+                                ))}
                             </div>
                         </div>
 
