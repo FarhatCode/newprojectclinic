@@ -333,18 +333,20 @@ app.post('/api/content', authMiddleware, upload.any(), (req, res) => {
         }
 
         // прикрепляем файлы по имени поля
-        req.files.forEach((file) => {
-            const match = file.fieldname.match(/^file_(\d+)$/);
-            if (match) {
-                const idx = parseInt(match[1], 10);
-                if (steps[idx]) {
-                    steps[idx].image = {
-                        file: {},
-                        preview: `${VITE_UPLOADS_URL}/uploads/${file.filename}`
-                    };
+        if (req.files && Array.isArray(req.files)) {
+            req.files.forEach((file) => {
+                const match = file.fieldname.match(/^file_(\d+)$/);
+                if (match) {
+                    const idx = parseInt(match[1], 10);
+                    if (steps[idx]) {
+                        steps[idx].image = {
+                            file: {},
+                            preview: `${VITE_UPLOADS_URL}/uploads/${file.filename}`
+                        };
+                    }
                 }
-            }
-        });
+            });
+        }
 
         db.content[section] = {
             title: req.body.title || db.content[section]?.title || "",
